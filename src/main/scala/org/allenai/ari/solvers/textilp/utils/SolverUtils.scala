@@ -230,9 +230,10 @@ object SolverUtils {
   }
 
   def extract(question: String, focus: String, searchHitSize: Int): Seq[(String, Double)] = {
+    val strippedFocus = focus.stripSuffix(".")   // period at the end often causes empty Lucene hits
     val questionWords = keywordTokenizer.stemmedKeywordTokenize(question)
-    val focusWords = keywordTokenizer.stemmedKeywordTokenize(focus)
-    val searchStr = s"$question $focus"
+    val focusWords = keywordTokenizer.stemmedKeywordTokenize(strippedFocus)
+    val searchStr = s"$question $strippedFocus"
 
     val response = esClient.prepareSearch(Constants.elasticBeingUsed.indexName.keys.toSeq: _*)
       // NOTE: DFS_QUERY_THEN_FETCH guarantees that multi-index queries return accurate scoring
